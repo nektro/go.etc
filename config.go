@@ -9,7 +9,7 @@ import (
 )
 
 func InitConfig(path string, template interface{}) {
-	DieOnError(Assert(DoesFileExist(path), "config.json does not exist!"))
+	DieOnError(Assert(DoesFileExist(path), path+" does not exist!"))
 	json.Unmarshal(ReadFile(path), &template)
 }
 
