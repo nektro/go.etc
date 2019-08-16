@@ -3,6 +3,9 @@ package etc
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/aymerick/raymond"
 	"github.com/nektro/go-util/util"
@@ -28,4 +31,17 @@ func AssertPostFormValuesExist(r *http.Request, args ...string) error {
 		}
 	}
 	return nil
+}
+
+func RunOnClose(f func()) {
+	gracefulStop := make(chan os.Signal)
+	signal.Notify(gracefulStop, syscall.SIGTERM)
+	signal.Notify(gracefulStop, syscall.SIGINT)
+
+	go func() {
+		sig := <-gracefulStop
+		fmt.Println(F("[%s]", T()), F("Caught signal '%+v'", sig))
+		f()
+		os.Exit(0)
+	}()
 }
