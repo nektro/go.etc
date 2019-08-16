@@ -7,6 +7,7 @@ import (
 	"github.com/aymerick/raymond"
 	"github.com/nektro/go-util/util"
 
+	. "github.com/nektro/go-util/alias"
 )
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
@@ -14,4 +15,17 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 	result, _ := raymond.Render(template, context)
 	w.Header().Add("Content-Type", "text/html")
 	fmt.Fprintln(w, result)
+}
+
+func AssertPostFormValuesExist(r *http.Request, args ...string) error {
+	for _, item := range args {
+		v, o := r.PostForm[item]
+		if !o {
+			return E(F("form[%s] not sent", item))
+		}
+		if len(v) == 0 {
+			return E(F("form[%s] empty", item))
+		}
+	}
+	return nil
 }
