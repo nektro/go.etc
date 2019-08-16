@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/aymerick/raymond"
 	"github.com/nektro/go-util/util"
 
-	"github.com/aymerick/raymond"
 )
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
