@@ -40,7 +40,7 @@ func RunOnClose(f func()) {
 
 	go func() {
 		sig := <-gracefulStop
-		fmt.Println(F("[%s]", T()), F("Caught signal '%+v'", sig))
+		util.Log(F("Caught signal '%+v'", sig))
 		f()
 		os.Exit(0)
 	}()
