@@ -2,19 +2,27 @@ package etc
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/aymerick/raymond"
+	"github.com/nektro/go-util/types"
 	"github.com/nektro/go-util/util"
 
 	. "github.com/nektro/go-util/alias"
 )
 
+var (
+	MFS = new(types.MultiplexFileSystem)
+)
+
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
-	template := string(util.ReadFile(path))
+	reader, _ := MFS.Open(path)
+	bytes, _ := ioutil.ReadAll(reader)
+	template := string(bytes)
 	result, _ := raymond.Render(template, context)
 	w.Header().Add("Content-Type", "text/html")
 	fmt.Fprintln(w, result)
