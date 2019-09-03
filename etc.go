@@ -9,15 +9,40 @@ import (
 	"syscall"
 
 	"github.com/aymerick/raymond"
+	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/types"
 	"github.com/nektro/go-util/util"
+	dbstorage "github.com/nektro/go.dbstorage"
 
 	. "github.com/nektro/go-util/alias"
 )
 
 var (
-	MFS = new(types.MultiplexFileSystem)
+	MFS      = new(types.MultiplexFileSystem)
+	Database *dbstorage.DbProxy
 )
+
+func Init(appId string, config interface{}) {
+	homedir, _ := homedir.Dir()
+	dataRoot := homedir + "/.config/" + appId
+	configPath := dataRoot + "/config.json"
+	util.Log("Reading configuration from", configPath)
+
+	//
+	if !util.DoesDirectoryExist(dataRoot) {
+		os.MkdirAll(dataRoot, os.ModePerm)
+	}
+	if !util.DoesFileExist(configPath) {
+		ioutil.WriteFile(configPath, []byte("{\n}\n"), os.ModePerm)
+	}
+	InitConfig(configPath, &config)
+
+	//
+	SetSessionName("session_" + appId + "_test")
+
+	//
+	Database = dbstorage.ConnectSqlite(dataRoot + "/access.db")
+}
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
 	reader, _ := MFS.Open(path)
