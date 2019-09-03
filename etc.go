@@ -38,7 +38,7 @@ func Init(appId string, config interface{}) {
 	InitConfig(configPath, &config)
 
 	//
-	SetSessionName("session_" + appId + "_test")
+	SetSessionName("session_" + appId)
 
 	//
 	Database = dbstorage.ConnectSqlite(dataRoot + "/access.db")
