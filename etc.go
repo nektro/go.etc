@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"reflect"
 	"syscall"
 
 	"github.com/aymerick/raymond"
@@ -42,6 +43,21 @@ func Init(appId string, config interface{}) {
 
 	//
 	Database = dbstorage.ConnectSqlite(dataRoot + "/access.db")
+
+	//
+	v := reflect.ValueOf(config).Elem().Elem()
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		if f.Name == "Themes" {
+			for _, item := range v.FieldByName(f.Name).Interface().([]string) {
+				loc := dataRoot + "/themes/" + item
+				util.Log("[add-theme]", item)
+				util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
+				MFS.Add(http.Dir(loc))
+			}
+		}
+	}
 }
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
