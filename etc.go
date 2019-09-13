@@ -57,6 +57,12 @@ func Init(appId string, config interface{}) {
 				MFS.Add(http.Dir(loc))
 			}
 		}
+		if f.Name == "Providers" {
+			for _, item := range v.FieldByName(f.Name).Interface().([]oauth2.Provider) {
+				util.Log(1, item)
+				oauth2.ProviderIDMap[item.ID] = item
+			}
+		}
 	}
 }
 
