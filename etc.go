@@ -123,3 +123,15 @@ func RunOnClose(f func()) {
 		os.Exit(0)
 	}()
 }
+
+func WriteResponse(r *http.Request, w http.ResponseWriter, title string, messages ...string) {
+	WriteHandlebarsFile(r, w, "/response.hbs", map[string]interface{}{
+		"title":    title,
+		"messages": messages,
+	})
+}
+
+func WriteLinkResponse(r *http.Request, w http.ResponseWriter, title string, linkText string, href string, messages ...string) {
+	messages = append(messages, "<a href=\""+href+"\">"+linkText+"</a>")
+	WriteResponse(r, w, title, messages...)
+}
