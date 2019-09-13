@@ -64,6 +64,16 @@ func Init(appId string, config interface{}) {
 			}
 		}
 	}
+
+	//
+	MFS.Add(http.Dir("./www/"))
+
+	statikFS, err := fs.New()
+	util.DieOnError(err)
+	MFS.Add(http.FileSystem(statikFS))
+
+	//
+	http.HandleFunc("/", http.FileServer(MFS).ServeHTTP)
 }
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
