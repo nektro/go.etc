@@ -23,7 +23,7 @@ var (
 	Database *dbstorage.DbProxy
 )
 
-func Init(appId string, config interface{}) {
+func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	homedir, _ := homedir.Dir()
 	dataRoot := homedir + "/.config/" + appId
 	configPath := dataRoot + "/config.json"
@@ -63,6 +63,11 @@ func Init(appId string, config interface{}) {
 				oauth2.ProviderIDMap[item.ID] = item
 			}
 		}
+		if f.Name == "Clients" {
+			clients := v.FieldByName(f.Name).Interface().([]oauth2.AppConf)
+			http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
+			http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
+		}
 	}
 
 	//
@@ -74,6 +79,12 @@ func Init(appId string, config interface{}) {
 
 	//
 	http.HandleFunc("/", http.FileServer(MFS).ServeHTTP)
+}
+
+func helperIsLoggedIn(r *http.Request) bool {
+	sess := GetSession(r)
+	_, ok := sess.Values["user"]
+	return ok
 }
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
