@@ -14,13 +14,15 @@ import (
 	"github.com/nektro/go-util/types"
 	"github.com/nektro/go-util/util"
 	dbstorage "github.com/nektro/go.dbstorage"
+	oauth2 "github.com/nektro/go.oauth2"
+	"github.com/rakyll/statik/fs"
 
 	. "github.com/nektro/go-util/alias"
 )
 
 var (
 	MFS      = new(types.MultiplexFileSystem)
-	Database *dbstorage.DbProxy
+	Database dbstorage.Database
 )
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
