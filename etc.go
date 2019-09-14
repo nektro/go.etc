@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"reflect"
 	"syscall"
 
@@ -27,8 +28,8 @@ var (
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	homedir, _ := homedir.Dir()
-	dataRoot := homedir + "/.config/" + appId
-	configPath := dataRoot + "/config.json"
+	dataRoot := path.Join(homedir, ".config", appId)
+	configPath := path.Join(dataRoot, "config.json")
 	util.Log("Reading configuration from", configPath)
 
 	//
