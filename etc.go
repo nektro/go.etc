@@ -50,26 +50,14 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	//
 	v := reflect.ValueOf(config).Elem().Elem()
 	t := v.Type()
-	for i := 0; i < t.NumField(); i++ {
-		f := t.Field(i)
-		if f.Name == "Themes" {
-			for _, item := range v.FieldByName(f.Name).Interface().([]string) {
-				loc := dataRoot + "/themes/" + item
-				util.Log("[add-theme]", item)
-				util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
-				MFS.Add(http.Dir(loc))
-			}
-		}
-		if f.Name == "Providers" {
-			for _, item := range v.FieldByName(f.Name).Interface().([]oauth2.Provider) {
-				util.Log(1, item)
-				oauth2.ProviderIDMap[item.ID] = item
-			}
-		}
-		if f.Name == "Clients" {
-			clients := v.FieldByName(f.Name).Interface().([]oauth2.AppConf)
-			http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
-			http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
+
+	f, ok := t.FieldByName("Themes")
+	if ok {
+		for _, item := range v.FieldByName(f.Name).Interface().([]string) {
+			loc := dataRoot + "/themes/" + item
+			util.Log("[add-theme]", item)
+			util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
+			MFS.Add(http.Dir(loc))
 		}
 	}
 
@@ -82,6 +70,21 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 
 	//
 	http.HandleFunc("/", http.FileServer(MFS).ServeHTTP)
+
+	f, ok = t.FieldByName("Providers")
+	if ok {
+		for _, item := range v.FieldByName(f.Name).Interface().([]oauth2.Provider) {
+			util.Log(1, item)
+			oauth2.ProviderIDMap[item.ID] = item
+		}
+	}
+
+	f, ok = t.FieldByName("Clients")
+	if ok {
+		clients := v.FieldByName(f.Name).Interface().([]oauth2.AppConf)
+		http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
+		http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
+	}
 }
 
 func helperIsLoggedIn(r *http.Request) bool {
