@@ -97,8 +97,16 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 	reader, _ := MFS.Open(path)
 	bytes, _ := ioutil.ReadAll(reader)
 	template := string(bytes)
-	result, _ := raymond.Render(template, context)
-	w.Header().Add("Content-Type", "text/html")
+	var contentType string
+	var result string
+
+	switch r.Header.Get("accept") {
+	default:
+		contentType = "text/html"
+		result, _ = raymond.Render(template, context)
+	}
+
+	w.Header().Add("Content-Type", contentType)
 	fmt.Fprintln(w, result)
 }
 
