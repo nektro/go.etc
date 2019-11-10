@@ -86,6 +86,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	f, ok = t.FieldByName("Clients")
 	if ok {
 		clients := v.FieldByName(f.Name).Interface().([]oauth2.AppConf)
+		util.DieOnError(util.Assert(len(clients) > 0, "Must provide at least 1 oauth2.AppConf in the 'Clients' config array."))
 		http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
 		http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
 	}
