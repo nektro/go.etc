@@ -6,10 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/signal"
 	"path"
 	"reflect"
-	"syscall"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -126,20 +124,6 @@ func AssertPostFormValuesExist(r *http.Request, args ...string) error {
 		}
 	}
 	return nil
-}
-
-func RunOnClose(f func()) {
-	gracefulStop := make(chan os.Signal)
-	signal.Notify(gracefulStop, syscall.SIGTERM)
-	signal.Notify(gracefulStop, syscall.SIGINT)
-
-	go func() {
-		sig := <-gracefulStop
-		fmt.Println()
-		util.Log(F("Caught signal '%+v'", sig))
-		f()
-		os.Exit(0)
-	}()
 }
 
 func WriteResponse(r *http.Request, w http.ResponseWriter, title string, messages ...string) {
