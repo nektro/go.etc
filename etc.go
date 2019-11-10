@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"mime"
 	"net/http"
 	"os"
 	"path"
@@ -59,6 +60,10 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 			MFS.Add(http.Dir(loc))
 		}
 	}
+
+	//
+	// https://github.com/labstack/echo/issues/1038#issuecomment-410294904
+	mime.AddExtensionType(".js", "application/javascript")
 
 	//
 	MFS.Add(http.Dir("./www/"))
