@@ -69,8 +69,9 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	MFS.Add(http.Dir("./www/"))
 
 	statikFS, err := fs.New()
-	util.DieOnError(err)
-	MFS.Add(http.FileSystem(statikFS))
+	if err == nil {
+		MFS.Add(http.FileSystem(statikFS))
+	}
 
 	//
 	http.HandleFunc("/", http.FileServer(MFS).ServeHTTP)
