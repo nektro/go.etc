@@ -11,8 +11,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/spf13/pflag"
-
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/types"
@@ -20,6 +18,7 @@ import (
 	dbstorage "github.com/nektro/go.dbstorage"
 	oauth2 "github.com/nektro/go.oauth2"
 	"github.com/rakyll/statik/fs"
+	"github.com/spf13/pflag"
 
 	. "github.com/nektro/go-util/alias"
 )
