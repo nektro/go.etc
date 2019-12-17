@@ -105,9 +105,9 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		}
 	}
 
-	clients := []oauth2.AppConf{}
 	f, ok = t.FieldByName("Clients")
 	if ok {
+		clients := []oauth2.AppConf{}
 		for k := range oauth2.ProviderIDMap {
 			n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
 			i := "auth-" + n + "-id"
