@@ -9,6 +9,9 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"strings"
+
+	"github.com/spf13/pflag"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -25,6 +28,24 @@ var (
 	MFS      = new(types.MultiplexFileSystem)
 	Database dbstorage.Database
 )
+
+var (
+	appconfFlags = map[string]*string{}
+)
+
+func PreInit() {
+	//
+	for k, _ := range oauth2.ProviderIDMap {
+		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
+		i := "auth-" + n + "-id"
+		appconfFlags[i] = pflag.String(i, "", "")
+		s := "auth-" + n + "-secret"
+		appconfFlags[s] = pflag.String(s, "", "")
+	}
+
+	//
+	pflag.Parse()
+}
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	homedir, _ := homedir.Dir()
@@ -85,6 +106,16 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	}
 
 	clients := []oauth2.AppConf{}
+	for k, _ := range oauth2.ProviderIDMap {
+		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
+		i := "auth-" + n + "-id"
+		s := "auth-" + n + "-secret"
+		iv := *appconfFlags[i]
+		sv := *appconfFlags[s]
+		if len(iv) > 0 && len(sv) > 0 {
+			clients = append(clients, oauth2.AppConf{For: n, ID: iv, Secret: sv})
+		}
+	}
 	f, ok = t.FieldByName("Clients")
 	if ok {
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
