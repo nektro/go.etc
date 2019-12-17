@@ -106,18 +106,18 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	}
 
 	clients := []oauth2.AppConf{}
-	for k, _ := range oauth2.ProviderIDMap {
-		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
-		i := "auth-" + n + "-id"
-		s := "auth-" + n + "-secret"
-		iv := *appconfFlags[i]
-		sv := *appconfFlags[s]
-		if len(iv) > 0 && len(sv) > 0 {
-			clients = append(clients, oauth2.AppConf{For: n, ID: iv, Secret: sv})
-		}
-	}
 	f, ok = t.FieldByName("Clients")
 	if ok {
+		for k, _ := range oauth2.ProviderIDMap {
+			n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
+			i := "auth-" + n + "-id"
+			s := "auth-" + n + "-secret"
+			iv := *appconfFlags[i]
+			sv := *appconfFlags[s]
+			if len(iv) > 0 && len(sv) > 0 {
+				clients = append(clients, oauth2.AppConf{For: n, ID: iv, Secret: sv})
+			}
+		}
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
 		util.DieOnError(util.Assert(len(clients) > 0, "Must provide at least 1 oauth2.AppConf in the 'Clients' config array."))
 		http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
