@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	cookie    string
+	cookie    = "gosession"
 	randomKey = securecookie.GenerateRandomKey(32)
 	store     = sessions.NewCookieStore(randomKey)
 )
