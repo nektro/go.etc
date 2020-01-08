@@ -37,9 +37,9 @@ func PreInit() {
 	for k, _ := range oauth2.ProviderIDMap {
 		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
 		i := "auth-" + n + "-id"
-		appconfFlags[i] = pflag.String(i, "", "")
+		appconfFlags[i] = pflag.String(i, "", "Client ID for "+k+" OAuth2 authentication.")
 		s := "auth-" + n + "-secret"
-		appconfFlags[s] = pflag.String(s, "", "")
+		appconfFlags[s] = pflag.String(s, "", "Client Secret for "+k+" OAuth2 authentication.")
 	}
 
 	//
