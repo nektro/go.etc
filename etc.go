@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/aymerick/raymond"
@@ -184,4 +185,11 @@ func WriteResponse(r *http.Request, w http.ResponseWriter, title string, message
 func WriteLinkResponse(r *http.Request, w http.ResponseWriter, title string, linkText string, href string, messages ...string) {
 	messages = append(messages, "<a href=\""+href+"\">"+linkText+"</a>")
 	WriteResponse(r, w, title, messages...)
+}
+
+func StartServer(port int) {
+	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
+	p := strconv.Itoa(port)
+	util.Log("Initialization complete. Starting server on port " + p)
+	http.ListenAndServe(":"+p, nil)
 }
