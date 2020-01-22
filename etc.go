@@ -78,13 +78,11 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 
 	f, ok := t.FieldByName("Themes")
 	if ok {
-		for _, item := range appFlagTheme {
-			loc := dataRoot + "/themes/" + item
-			util.Log("add-theme:", item)
-			util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
-			MFS.Add(http.Dir(loc))
-		}
-		for _, item := range v.FieldByName(f.Name).Interface().([]string) {
+		themes := []string{}
+		themes = append(themes, v.FieldByName(f.Name).Interface().([]string)...)
+		themes = append(themes, appFlagTheme...)
+
+		for _, item := range themes {
 			loc := dataRoot + "/themes/" + item
 			util.Log("add-theme:", item)
 			util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
