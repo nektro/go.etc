@@ -88,6 +88,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 			util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
 			MFS.Add(http.Dir(loc))
 		}
+		v.FieldByName(f.Name).Set(reflect.ValueOf(themes))
 	}
 
 	//
@@ -130,6 +131,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		util.DieOnError(util.Assert(len(clients) > 0, "Must provide at least 1 oauth2.AppConf in the 'Clients' config array."))
 		http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
 		http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
+		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
 	}
 }
 
