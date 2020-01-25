@@ -10,7 +10,6 @@ import (
 	"path"
 	"reflect"
 	"strconv"
-	"strings"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -30,6 +29,7 @@ var (
 )
 
 var (
+	defProviders = []string{}
 	appconfFlags = map[string]*string{}
 	appFlagTheme []string
 )
@@ -107,8 +107,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	f, ok = t.FieldByName("Clients")
 	if ok {
 		clients := []oauth2.AppConf{}
-		for k := range oauth2.ProviderIDMap {
-			n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
+		for _, n := range defProviders {
 			i := "auth-" + n + "-id"
 			s := "auth-" + n + "-secret"
 			iv := *appconfFlags[i]
