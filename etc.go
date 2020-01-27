@@ -45,7 +45,6 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	homedir, _ := homedir.Dir()
 	dataRoot := path.Join(homedir, ".config", appId)
 	configPath := path.Join(dataRoot, "config.json")
-	util.Log("Reading configuration from", configPath)
 
 	//
 	if !util.DoesDirectoryExist(dataRoot) {
