@@ -7,7 +7,7 @@ import (
 	"mime"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"reflect"
 	"strconv"
 
@@ -32,19 +32,23 @@ var (
 	defProviders = []string{}
 	appconfFlags = map[string]*string{}
 	appFlagTheme []string
+	confLocFlag  string
 )
 
-func PreInit() {
+func PreInit(appId string) {
 	PreInitAuth()
 	PreInitThemes()
+
+	homedir, _ := homedir.Dir()
+	pflag.StringVar(&confLocFlag, "config", homedir+"/.config/"+appId+"/config.json", "")
 
 	pflag.Parse()
 }
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
-	homedir, _ := homedir.Dir()
-	dataRoot := path.Join(homedir, ".config", appId)
-	configPath := path.Join(dataRoot, "config.json")
+	configPath := confLocFlag
+	dataRoot := filepath.Dir(configPath)
+	util.Log("Reading configuration from:", configPath)
 
 	//
 	if !util.DoesDirectoryExist(dataRoot) {
