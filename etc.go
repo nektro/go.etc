@@ -58,6 +58,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		ioutil.WriteFile(configPath, []byte("{\n}\n"), os.ModePerm)
 	}
 	InitConfig(configPath, &config)
+	pflag.Parse()
 
 	//
 	SetSessionName("session_" + appId)
