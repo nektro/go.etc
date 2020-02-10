@@ -25,8 +25,9 @@ import (
 )
 
 var (
-	MFS      = new(types.MultiplexFileSystem)
-	Database dbstorage.Database
+	MFS        = new(types.MultiplexFileSystem)
+	Database   dbstorage.Database
+	ConfigPath = ""
 )
 
 var (
@@ -47,18 +48,18 @@ func PreInit(appId string) {
 }
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
-	configPath := confLocFlag
-	dataRoot := filepath.Dir(configPath)
-	util.Log("Reading configuration from:", configPath)
+	ConfigPath = confLocFlag
+	dataRoot := filepath.Dir(ConfigPath)
+	util.Log("Reading configuration from:", ConfigPath)
 
 	//
 	if !util.DoesDirectoryExist(dataRoot) {
 		os.MkdirAll(dataRoot, os.ModePerm)
 	}
-	if !util.DoesFileExist(configPath) {
-		ioutil.WriteFile(configPath, []byte("{\n}\n"), os.ModePerm)
+	if !util.DoesFileExist(ConfigPath) {
+		ioutil.WriteFile(ConfigPath, []byte("{\n}\n"), os.ModePerm)
 	}
-	InitConfig(configPath, &config)
+	InitConfig(ConfigPath, &config)
 	pflag.Parse()
 
 	//
