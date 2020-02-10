@@ -49,12 +49,12 @@ func PreInit(appId string) {
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	ConfigPath = confLocFlag
-	dataRoot := filepath.Dir(ConfigPath)
+	dRoot := DataRoot()
 	util.Log("Reading configuration from:", ConfigPath)
 
 	//
-	if !util.DoesDirectoryExist(dataRoot) {
-		os.MkdirAll(dataRoot, os.ModePerm)
+	if !util.DoesDirectoryExist(dRoot) {
+		os.MkdirAll(dRoot, os.ModePerm)
 	}
 	if !util.DoesFileExist(ConfigPath) {
 		ioutil.WriteFile(ConfigPath, []byte("{\n}\n"), os.ModePerm)
@@ -66,7 +66,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	SetSessionName("session_" + appId)
 
 	//
-	Database = dbstorage.ConnectSqlite(dataRoot + "/access.db")
+	Database = dbstorage.ConnectSqlite(dRoot + "/access.db")
 
 	//
 	v := reflect.ValueOf(config).Elem().Elem()
@@ -80,7 +80,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		themes = fixArray2(mapset.NewSet(fixArray1(themes)...).ToSlice())
 
 		for _, item := range themes {
-			loc := dataRoot + "/themes/" + item
+			loc := dRoot + "/themes/" + item
 			util.Log("add-theme:", item)
 			util.DieOnError(util.Assert(util.DoesDirectoryExist(loc), F("'%s' directory does not exist!", loc)))
 			MFS.Add(http.Dir(loc))
@@ -128,6 +128,10 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
 		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
 	}
+}
+
+func DataRoot() string {
+	return filepath.Dir(ConfigPath)
 }
 
 func helperIsLoggedIn(r *http.Request) bool {
