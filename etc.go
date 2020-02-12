@@ -12,8 +12,8 @@ import (
 	"strconv"
 
 	"github.com/aymerick/raymond"
-	mapset "github.com/deckarep/golang-set"
 	"github.com/mitchellh/go-homedir"
+	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/types"
 	"github.com/nektro/go-util/util"
 	dbstorage "github.com/nektro/go.dbstorage"
@@ -75,7 +75,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		themes := []string{}
 		themes = append(themes, v.FieldByName(f.Name).Interface().([]string)...)
 		themes = append(themes, appFlagTheme...)
-		themes = fixArray2(mapset.NewSet(fixArray1(themes)...).ToSlice())
+		themes = stringsu.Depupe(themes)
 
 		for _, item := range themes {
 			loc := dRoot + "/themes/" + item
@@ -136,22 +136,6 @@ func helperIsLoggedIn(r *http.Request) bool {
 	sess := GetSession(r)
 	_, ok := sess.Values["user"]
 	return ok
-}
-
-func fixArray1(a []string) []interface{} {
-	r := []interface{}{}
-	for _, item := range a {
-		r = append(r, item)
-	}
-	return r
-}
-
-func fixArray2(a []interface{}) []string {
-	r := []string{}
-	for _, item := range a {
-		r = append(r, item.(string))
-	}
-	return r
 }
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
