@@ -37,12 +37,12 @@ var (
 	appFlagTheme []string
 )
 
-func PreInit(appId string) {
+func PreInit() {
 	PreInitAuth()
 	PreInitThemes()
 
 	homedir, _ := homedir.Dir()
-	pflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+appId+"/config.json", "")
+	pflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+AppID+"/config.json", "")
 
 	pflag.Parse()
 }
