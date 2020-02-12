@@ -25,6 +25,7 @@ import (
 )
 
 var (
+	AppID      string
 	MFS        = new(types.MultiplexFileSystem)
 	Database   dbstorage.Database
 	ConfigPath string
