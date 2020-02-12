@@ -27,7 +27,7 @@ import (
 var (
 	MFS        = new(types.MultiplexFileSystem)
 	Database   dbstorage.Database
-	ConfigPath = ""
+	ConfigPath string
 )
 
 var (
