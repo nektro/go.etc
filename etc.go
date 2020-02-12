@@ -7,9 +7,11 @@ import (
 	"mime"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -190,4 +192,22 @@ func StartServer(port int) {
 	p := strconv.Itoa(port)
 	util.Log("Initialization complete. Starting server on port " + p)
 	http.ListenAndServe(":"+p, nil)
+}
+
+// FixBareVersion will convert a 'vMASTER' version string to a string
+// similar to 'vMASTER-2020.02.12-6cae79d'.
+func FixBareVersion(vs string) string {
+	if vs == "vMASTER" {
+		// add date
+		pathS, _ := filepath.Abs(os.Args[0])
+		s, _ := os.Stat(pathS)
+		vs += "-" + strings.ReplaceAll(s.ModTime().UTC().String()[:10], "-", ".")
+
+		// add git hash
+		b, _ := exec.Command("git", "rev-parse", "--short", "HEAD").Output()
+		if len(b) == 8 {
+			vs += "-" + string(b)[:7]
+		}
+	}
+	return vs
 }
