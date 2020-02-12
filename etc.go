@@ -34,7 +34,6 @@ var (
 	defProviders = []string{}
 	appconfFlags = map[string]*string{}
 	appFlagTheme []string
-	confLocFlag  string
 )
 
 func PreInit(appId string) {
@@ -42,13 +41,12 @@ func PreInit(appId string) {
 	PreInitThemes()
 
 	homedir, _ := homedir.Dir()
-	pflag.StringVar(&confLocFlag, "config", homedir+"/.config/"+appId+"/config.json", "")
+	pflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+appId+"/config.json", "")
 
 	pflag.Parse()
 }
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
-	ConfigPath = confLocFlag
 	dRoot := DataRoot()
 	util.Log("Reading configuration from:", ConfigPath)
 
