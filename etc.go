@@ -12,6 +12,9 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/gorilla/mux"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -31,6 +34,7 @@ var (
 	MFS        = new(types.MultiplexFileSystem)
 	Database   dbstorage.Database
 	ConfigPath string
+	Router     *mux.Router
 )
 
 var (
@@ -70,6 +74,9 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	Database = dbstorage.ConnectSqlite(dRoot + "/access.db")
 
 	//
+	Router = mux.NewRouter()
+
+	//
 	v := reflect.ValueOf(config).Elem().Elem()
 	t := v.Type()
 
@@ -101,9 +108,6 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		MFS.Add(http.FileSystem(statikFS))
 	}
 
-	//
-	http.HandleFunc("/", http.FileServer(MFS).ServeHTTP)
-
 	f, ok = t.FieldByName("Providers")
 	if ok {
 		for _, item := range v.FieldByName(f.Name).Interface().([]oauth2.Provider) {
@@ -125,8 +129,8 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 			}
 		}
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
-		http.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
-		http.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
+		Router.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
+		Router.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
 		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
 	}
 }
@@ -191,7 +195,16 @@ func StartServer(port int) {
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
 	p := strconv.Itoa(port)
 	util.Log("Initialization complete. Starting server on port " + p)
-	http.ListenAndServe(":"+p, nil)
+	//
+	Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(MFS)))
+	//
+	srv := &http.Server{
+		Handler:      Router,
+		Addr:         ":" + p,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	srv.ListenAndServe()
 }
 
 // FixBareVersion will convert a 'vMASTER' version string to a string
