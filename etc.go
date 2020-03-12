@@ -198,6 +198,14 @@ func StartServer(port int) {
 	//
 	Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(MFS)))
 	//
+	Router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("X-Frame-Options", "sameorigin")
+			w.Header().Add("X-Content-Type-Options", "nosniff")
+			w.Header().Add("Referrer-Policy", "origin")
+			next.ServeHTTP(w, r)
+		})
+	})
 	srv := &http.Server{
 		Handler:      Router,
 		Addr:         ":" + p,
