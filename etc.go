@@ -195,9 +195,7 @@ func StartServer(port int) {
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
 	p := strconv.Itoa(port)
 	util.Log("Initialization complete. Starting server on port " + p)
-	//
 	Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(MFS)))
-	//
 	Router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("X-Frame-Options", "sameorigin")
