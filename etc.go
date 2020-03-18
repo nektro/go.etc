@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -214,7 +215,7 @@ func StartServer(port int) {
 }
 
 // FixBareVersion will convert a 'vMASTER' version string to a string
-// similar to 'vMASTER-2020.02.12-6cae79d'.
+// similar to 'vMASTER-2020.02.12-6cae79d'. Always append go version.
 func FixBareVersion(vs string) string {
 	if vs == "vMASTER" {
 		// add date
@@ -228,5 +229,6 @@ func FixBareVersion(vs string) string {
 			vs += "-" + string(b)[:7]
 		}
 	}
+	vs += "-" + runtime.Version()
 	return vs
 }
