@@ -15,9 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gorilla/mux"
-
 	"github.com/aymerick/raymond"
+	"github.com/gorilla/mux"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/types"
