@@ -149,8 +149,8 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 	reader, _ := MFS.Open(path)
 	bytes, _ := ioutil.ReadAll(reader)
 	template := string(bytes)
-	var contentType string
-	var result string
+	contentType := "text/html"
+	result, _ := raymond.Render(template, context)
 
 	switch r.Header.Get("accept") {
 	case "application/json":
@@ -158,8 +158,6 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 		resultB, _ := json.Marshal(context)
 		result = string(resultB)
 	default:
-		contentType = "text/html"
-		result, _ = raymond.Render(template, context)
 	}
 
 	w.Header().Add("Content-Type", contentType)
