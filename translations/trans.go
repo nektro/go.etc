@@ -11,6 +11,7 @@ import (
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
 	etc "github.com/nektro/go.etc"
+	"github.com/spf13/pflag"
 )
 
 // For fetching and integrating Crowdin translations built with:
@@ -20,6 +21,7 @@ var (
 	Server    = "https://astheno.rocks"
 	Languages []string
 	Words     = map[string]map[string]string{}
+	flagSkip  = pflag.Bool("skip-translation-fetch", false, "Enable this flag to only read native translation data.")
 )
 
 func get(end string) []byte {
@@ -32,16 +34,18 @@ func get(end string) []byte {
 func Fetch() {
 	// read translations from astheno.rocks
 	util.Log("translations:", "fetching...")
-	json.Unmarshal(get("/_languages.json"), &Languages)
-	fmt.Print("|")
-	for _, item := range Languages {
-		if len(item) == 0 {
-			continue
-		}
-		mp := map[string]string{}
-		json.Unmarshal(get("/"+item+".json"), &mp)
-		Words[item] = mp
+	if !*flagSkip {
+		json.Unmarshal(get("/_languages.json"), &Languages)
 		fmt.Print("|")
+		for _, item := range Languages {
+			if len(item) == 0 {
+				continue
+			}
+			mp := map[string]string{}
+			json.Unmarshal(get("/"+item+".json"), &mp)
+			Words[item] = mp
+			fmt.Print("|")
+		}
 	}
 	{
 		// add default english values
