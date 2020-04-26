@@ -65,8 +65,8 @@ func Fetch() {
 
 func Init() {
 	raymond.RegisterHelper("translate", func(context interface{}, options *raymond.Options) string {
-		a := options.Value("languages").([]string)
-		b := strings.Split(a[0], ",")
+		a := options.Value("languages").(string)
+		b := strings.Split(a, ",")
 		id := options.ParamStr(0)
 		b = append(b, "en")
 		for _, item := range b {

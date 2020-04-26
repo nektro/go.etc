@@ -148,13 +148,14 @@ func helperIsLoggedIn(r *http.Request) bool {
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
 	{
 		al, ok := r.Header["Accept-Language"]
-		if ok {
-			arr := []string{}
-			for _, item := range al {
-				arr = append(arr, strings.Split(item, ";")[0])
-			}
-			context["languages"] = arr
+		if !ok || al == nil {
+			al = []string{}
 		}
+		arr := []string{}
+		for _, item := range al {
+			arr = append(arr, strings.Split(item, ";")[0])
+		}
+		context["languages"] = strings.Join(arr, ",")
 	}
 	reader, _ := MFS.Open(path)
 	bytes, _ := ioutil.ReadAll(reader)
