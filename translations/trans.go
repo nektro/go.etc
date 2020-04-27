@@ -75,6 +75,7 @@ func Init() {
 				return s
 			}
 		}
+		util.LogError("translations:", "error:", "unable to find value for:", id)
 		return ""
 	})
 }
