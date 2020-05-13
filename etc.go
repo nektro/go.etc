@@ -11,17 +11,15 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/aymerick/raymond"
-	"github.com/gorilla/mux"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/types"
 	"github.com/nektro/go-util/util"
 	dbstorage "github.com/nektro/go.dbstorage"
+	"github.com/nektro/go.etc/htp"
 	oauth2 "github.com/nektro/go.oauth2"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/pflag"
@@ -34,7 +32,6 @@ var (
 	MFS        = new(types.MultiplexFileSystem)
 	Database   dbstorage.Database
 	ConfigPath string
-	Router     *mux.Router
 )
 
 var (
@@ -74,7 +71,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 	Database = dbstorage.ConnectSqlite(dRoot + "/access.db")
 
 	//
-	Router = mux.NewRouter()
+	htp.Init()
 
 	//
 	v := reflect.ValueOf(config).Elem().Elem()
@@ -129,8 +126,8 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 			}
 		}
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
-		Router.HandleFunc("/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
-		Router.HandleFunc("/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
+		htp.Register("", "/login", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
+		htp.Register("", "/callback", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
 		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
 	}
 }
@@ -201,25 +198,8 @@ func WriteLinkResponse(r *http.Request, w http.ResponseWriter, title string, lin
 }
 
 func StartServer(port int) {
-	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
-	p := strconv.Itoa(port)
-	util.Log("Initialization complete. Starting server on port " + p)
-	Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(MFS)))
-	Router.Use(func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("X-Frame-Options", "sameorigin")
-			w.Header().Add("X-Content-Type-Options", "nosniff")
-			w.Header().Add("Referrer-Policy", "origin")
-			next.ServeHTTP(w, r)
-		})
-	})
-	srv := &http.Server{
-		Handler:      Router,
-		Addr:         ":" + p,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-	srv.ListenAndServe()
+	htp.RegisterFileSystem(MFS)
+	htp.StartServer(port)
 }
 
 // FixBareVersion will convert a 'vMASTER' version string to a string
