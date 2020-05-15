@@ -18,11 +18,11 @@ import (
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/types"
 	"github.com/nektro/go-util/util"
+	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
 	"github.com/nektro/go.etc/htp"
 	oauth2 "github.com/nektro/go.oauth2"
 	"github.com/rakyll/statik/fs"
-	"github.com/spf13/pflag"
 
 	. "github.com/nektro/go-util/alias"
 )
@@ -45,9 +45,9 @@ func PreInit() {
 	PreInitThemes()
 
 	homedir, _ := homedir.Dir()
-	pflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+AppID+"/config.json", "")
+	vflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+AppID+"/config.json", "")
 
-	pflag.Parse()
+	vflag.Parse()
 }
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
@@ -62,7 +62,7 @@ func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.S
 		ioutil.WriteFile(ConfigPath, []byte("{\n}\n"), os.ModePerm)
 	}
 	InitConfig(ConfigPath, &config)
-	pflag.Parse()
+	vflag.Parse()
 
 	//
 	SetSessionName("session_" + appId)

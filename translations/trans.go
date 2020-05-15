@@ -10,8 +10,8 @@ import (
 	"github.com/aymerick/raymond"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
+	"github.com/nektro/go-util/vflag"
 	etc "github.com/nektro/go.etc"
-	"github.com/spf13/pflag"
 )
 
 // For fetching and integrating Crowdin translations built with:
@@ -21,7 +21,7 @@ var (
 	Server    = "https://astheno.rocks"
 	Languages []string
 	Words     = map[string]map[string]string{}
-	flagSkip  = pflag.Bool("skip-translation-fetch", false, "Enable this flag to only read native translation data.")
+	flagSkip  = vflag.Bool("skip-translation-fetch", false, "Enable this flag to only read native translation data.")
 )
 
 func get(end string) []byte {
