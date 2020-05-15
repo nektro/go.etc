@@ -28,7 +28,7 @@ func Init() {
 }
 
 // Register adds a handler to this router.
-func Register(method, path string, h func(w http.ResponseWriter, r *http.Request)) {
+func Register(path, method string, h func(w http.ResponseWriter, r *http.Request)) {
 	rt := router.Path(path)
 	if len(method) > 0 {
 		rt = rt.Methods(method)
