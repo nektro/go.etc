@@ -38,9 +38,19 @@ func Init() {
 
 // Register adds a handler to this router.
 func Register(path, method string, h func(w http.ResponseWriter, r *http.Request)) {
-	rt := router.Path(path)
+	methods := []string{}
 	if len(method) > 0 {
-		rt = rt.Methods(method)
+		methods = append(methods, method)
+	}
+	if method == http.MethodGet {
+		methods = append(methods, http.MethodHead)
+	}
+	rt := router.NewRoute()
+	rt.Methods(methods...)
+	if strings.HasSuffix(path, "/*") {
+		rt.PathPrefix(strings.TrimSuffix(path, "*"))
+	} else {
+		rt.Path(path)
 	}
 	rt.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
