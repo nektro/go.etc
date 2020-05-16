@@ -25,6 +25,15 @@ func Init() {
 	router = mux.NewRouter()
 	ErrorHandleFunc = func(http.ResponseWriter, *http.Request, string) {}
 	controller = &Controller{}
+
+	router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("X-Frame-Options", "sameorigin")
+			w.Header().Add("X-Content-Type-Options", "nosniff")
+			w.Header().Add("Referrer-Policy", "origin")
+			next.ServeHTTP(w, r)
+		})
+	})
 }
 
 // Register adds a handler to this router.
@@ -66,14 +75,6 @@ func RegisterFileSystem(fs http.FileSystem) {
 
 // StartServer initializes this server and listens on port
 func StartServer(port int) {
-	router.Use(func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("X-Frame-Options", "sameorigin")
-			w.Header().Add("X-Content-Type-Options", "nosniff")
-			w.Header().Add("Referrer-Policy", "origin")
-			next.ServeHTTP(w, r)
-		})
-	})
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
 	p := strconv.Itoa(port)
 	util.Log("Initialization complete. Starting server on port " + p)
