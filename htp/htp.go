@@ -67,6 +67,7 @@ func Register(path, method string, h func(w http.ResponseWriter, r *http.Request
 						return
 					}
 				}
+				panic(rcvs)
 			}
 		}()
 		h(w, r)
