@@ -38,11 +38,10 @@ var (
 	defProviders = []string{}
 	appconfFlags = map[string]*string{}
 	appFlagTheme []string
+	homedirV, _  = homedir.Dir()
 )
 
 func PreInit() {
-	homedir, _ := homedir.Dir()
-	vflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+AppID+"/config.json", "")
 	for k := range oauth2.ProviderIDMap {
 		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
 		defProviders = append(defProviders, n)
@@ -52,6 +51,7 @@ func PreInit() {
 		appconfFlags[s] = vflag.String(s, "", "Client Secret for "+k+" OAuth2 authentication.")
 	}
 	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
+	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
 
 	vflag.Parse()
 }
