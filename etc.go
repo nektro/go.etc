@@ -41,8 +41,6 @@ var (
 )
 
 func PreInit() {
-	PreInitThemes()
-
 	homedir, _ := homedir.Dir()
 	vflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+AppID+"/config.json", "")
 	for k := range oauth2.ProviderIDMap {
@@ -53,6 +51,7 @@ func PreInit() {
 		s := "auth-" + n + "-secret"
 		appconfFlags[s] = vflag.String(s, "", "Client Secret for "+k+" OAuth2 authentication.")
 	}
+	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
 
 	vflag.Parse()
 }
