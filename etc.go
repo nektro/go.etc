@@ -181,19 +181,6 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 	fmt.Fprintln(w, result)
 }
 
-func AssertPostFormValuesExist(r *http.Request, args ...string) error {
-	for _, item := range args {
-		v, o := r.PostForm[item]
-		if !o {
-			return E(F("form[%s] not sent", item))
-		}
-		if len(v) == 0 {
-			return E(F("form[%s] empty", item))
-		}
-	}
-	return nil
-}
-
 func WriteResponse(r *http.Request, w http.ResponseWriter, title string, messages ...string) {
 	WriteHandlebarsFile(r, w, "/response.hbs", map[string]interface{}{
 		"title":    title,
