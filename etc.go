@@ -79,8 +79,9 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	vflag.Parse()
 
 	//
-	Database, err = dbstorage.ConnectSqlite(dRoot + "/access.db")
+	db, err := dbstorage.ConnectSqlite(dRoot + "/access.db")
 	util.DieOnError(err)
+	Database = db
 
 	//
 	htp.Init()
@@ -145,7 +146,7 @@ func DataRoot() string {
 }
 
 func helperIsLoggedIn(r *http.Request) bool {
-	_, ok := jwt.VerifyRequest(r, jwtSecret)
+	_, ok := jwt.VerifyRequest(r, JWTSecret)
 	return ok
 }
 
