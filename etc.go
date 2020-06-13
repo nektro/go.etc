@@ -27,6 +27,7 @@ import (
 	. "github.com/nektro/go-util/alias"
 )
 
+// globals
 var (
 	AppID      string
 	MFS        = new(types.MultiplexFileSystem)
@@ -41,6 +42,7 @@ var (
 	homedirV, _  = homedir.Dir()
 )
 
+// PreInit registers and parses application flags
 func PreInit() {
 	for k := range oauth2.ProviderIDMap {
 		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
@@ -57,6 +59,7 @@ func PreInit() {
 }
 
 func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
+// Init sets up app-agnostic features
 	dRoot := DataRoot()
 	util.Log("Reading configuration from:", ConfigPath)
 
