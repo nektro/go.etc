@@ -61,8 +61,8 @@ func PreInit() {
 	vflag.Parse()
 }
 
-func Init(appId string, config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 // Init sets up app-agnostic features
+func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	dRoot := DataRoot()
 	util.Log("Reading configuration from:", ConfigPath)
 
