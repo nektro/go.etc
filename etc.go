@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/aymerick/raymond"
+	"github.com/gorilla/securecookie"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/types"
@@ -21,6 +22,7 @@ import (
 	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
 	"github.com/nektro/go.etc/htp"
+	"github.com/nektro/go.etc/jwt"
 	oauth2 "github.com/nektro/go.oauth2"
 	"github.com/rakyll/statik/fs"
 
@@ -33,6 +35,7 @@ var (
 	MFS        = new(types.MultiplexFileSystem)
 	Database   dbstorage.Database
 	ConfigPath string
+	JWTSecret  string
 )
 
 var (
@@ -54,6 +57,7 @@ func PreInit() {
 	}
 	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
 	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
+	vflag.StringVar(&JWTSecret, "jwt-secret", string(securecookie.GenerateRandomKey(64)), "Privte secret to sign and verify JWT auth tokens with.")
 
 	vflag.Parse()
 }
@@ -146,8 +150,7 @@ func DataRoot() string {
 }
 
 func helperIsLoggedIn(r *http.Request) bool {
-	sess := GetSession(r)
-	_, ok := sess.Values["user"]
+	_, ok := jwt.VerifyRequest(r, jwtSecret)
 	return ok
 }
 
