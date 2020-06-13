@@ -79,10 +79,8 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	vflag.Parse()
 
 	//
-	SetSessionName("session_" + appId)
-
-	//
-	Database = dbstorage.ConnectSqlite(dRoot + "/access.db")
+	Database, err = dbstorage.ConnectSqlite(dRoot + "/access.db")
+	util.DieOnError(err)
 
 	//
 	htp.Init()
