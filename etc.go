@@ -41,11 +41,18 @@ var (
 )
 
 func PreInit() {
-	PreInitAuth()
 	PreInitThemes()
 
 	homedir, _ := homedir.Dir()
 	vflag.StringVar(&ConfigPath, "config", homedir+"/.config/"+AppID+"/config.json", "")
+	for k := range oauth2.ProviderIDMap {
+		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
+		defProviders = append(defProviders, n)
+		i := "auth-" + n + "-id"
+		appconfFlags[i] = vflag.String(i, "", "Client ID for "+k+" OAuth2 authentication.")
+		s := "auth-" + n + "-secret"
+		appconfFlags[s] = vflag.String(s, "", "Client Secret for "+k+" OAuth2 authentication.")
+	}
 
 	vflag.Parse()
 }
