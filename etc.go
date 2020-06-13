@@ -35,6 +35,7 @@ var (
 	Database   dbstorage.Database
 	ConfigPath string
 	JWTSecret  string
+	Port       int
 )
 
 var (
@@ -57,6 +58,7 @@ func PreInit() {
 	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
 	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
 	vflag.StringVar(&JWTSecret, "jwt-secret", string(securecookie.GenerateRandomKey(64)), "Privte secret to sign and verify JWT auth tokens with.")
+	vflag.IntVar(&Port, "port", 8000, "The port to bind the web server to.")
 
 	vflag.Parse()
 }
@@ -191,9 +193,9 @@ func WriteLinkResponse(r *http.Request, w http.ResponseWriter, title string, lin
 	WriteResponse(r, w, title, messages...)
 }
 
-func StartServer(port int) {
+func StartServer() {
 	htp.RegisterFileSystem(MFS)
-	htp.StartServer(port)
+	htp.StartServer(Port)
 }
 
 // FixBareVersion will convert a 'vMASTER' version string to a string
