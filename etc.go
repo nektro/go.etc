@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/aymerick/raymond"
-	"github.com/gorilla/securecookie"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/types"
@@ -57,7 +56,7 @@ func PreInit() {
 	}
 	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
 	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
-	vflag.StringVar(&JWTSecret, "jwt-secret", string(securecookie.GenerateRandomKey(64)), "Privte secret to sign and verify JWT auth tokens with.")
+	vflag.StringVar(&JWTSecret, "jwt-secret", util.RandomString(64), "Privte secret to sign and verify JWT auth tokens with.")
 	vflag.IntVar(&Port, "port", 8000, "The port to bind the web server to.")
 
 	vflag.Parse()
