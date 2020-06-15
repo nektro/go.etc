@@ -25,8 +25,11 @@ func Get(iss string, sub string, secret string, nbf time.Time, exp time.Duration
 	return tokenS
 }
 
+// MapClaims represents the json data of this JWT
+type MapClaims jwt.MapClaims
+
 // Verify takes in a JWT string an a corresponding HS256 secret and verifies the token and its claims are valid.
-func Verify(token string, secret string) (jwt.MapClaims, bool) {
+func Verify(token string, secret string) (MapClaims, bool) {
 	tokenO, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("Unexpected signing method: " + fmt.Sprintf("%v", t.Header["alg"]))
@@ -46,10 +49,10 @@ func Verify(token string, secret string) (jwt.MapClaims, bool) {
 	if claims.Valid() != nil {
 		return nil, false
 	}
-	return claims, true
+	return MapClaims(claims), true
 }
 
 // VerifyRequest is a shortcut for `Verify(FromRequest(r), secret)`
-func VerifyRequest(r *http.Request, secret string) (jwt.MapClaims, bool) {
+func VerifyRequest(r *http.Request, secret string) (MapClaims, bool) {
 	return Verify(FromRequest(r), secret)
 }
