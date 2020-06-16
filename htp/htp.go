@@ -3,11 +3,13 @@ package htp
 import (
 	"fmt"
 	"net/http"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
 )
 
@@ -87,6 +89,10 @@ func StartServer(port int) {
 	p := strconv.Itoa(port)
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), "Binding to port "+p+" failed."), "It may be taken or you may not have permission to. Aborting!")
 	util.Log("Starting server on port " + p)
+	if AreWeInContainer() {
+		util.LogWarn("Looks like we might be running inside a container, so " + p + " might not be the actual port to access this server.")
+		util.LogWarn("Check your configuration for more information...")
+	}
 	util.Log("Initialization complete.")
 	srv := &http.Server{
 		Handler:      router,
@@ -95,4 +101,19 @@ func StartServer(port int) {
 		ReadTimeout:  15 * time.Second,
 	}
 	srv.ListenAndServe()
+}
+
+// AreWeInContainer returns true if this process is running inside docker
+func AreWeInContainer() bool {
+	cpc, _ := exec.Command("cat", "/proc/1/cgroup").Output()
+	for _, item := range strings.Split(string(cpc), "\n") {
+		ln := strings.Split(item, ":")
+		if len(ln) < 3 {
+			continue
+		}
+		if !stringsu.Contains([]string{"/", "/init.scope"}, ln[2]) {
+			return true
+		}
+	}
+	return false
 }
