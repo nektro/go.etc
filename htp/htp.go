@@ -9,8 +9,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/nektro/go-util/util"
-
-	. "github.com/nektro/go-util/alias"
 )
 
 // globals
@@ -86,8 +84,8 @@ func RegisterFileSystem(fs http.FileSystem) {
 
 // StartServer initializes this server and listens on port
 func StartServer(port int) {
-	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
 	p := strconv.Itoa(port)
+	util.DieOnError(util.Assert(util.IsPortAvailable(port), "Binding to port "+p+" failed."), "It may be taken or you may not have permission to. Aborting!")
 	util.Log("Starting server on port " + p)
 	util.Log("Initialization complete.")
 	srv := &http.Server{
