@@ -88,7 +88,8 @@ func RegisterFileSystem(fs http.FileSystem) {
 func StartServer(port int) {
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), F("Binding to port %d failed.", port)), "It may be taken or you may not have permission to. Aborting!")
 	p := strconv.Itoa(port)
-	util.Log("Initialization complete. Starting server on port " + p)
+	util.Log("Starting server on port " + p)
+	util.Log("Initialization complete.")
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         ":" + p,
