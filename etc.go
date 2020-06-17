@@ -65,7 +65,6 @@ func PreInit() {
 // Init sets up app-agnostic features
 func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	dRoot := DataRoot()
-	util.Log("Reading configuration from:", ConfigPath)
 
 	//
 	if !util.DoesDirectoryExist(dRoot) {
