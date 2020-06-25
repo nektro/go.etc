@@ -1,4 +1,4 @@
-package db
+package dbt
 
 import (
 	"database/sql/driver"
