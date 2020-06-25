@@ -17,6 +17,11 @@ const TimeZero = "0000-01-01 00:00:00"
 // Time is a custom sql/driver type to handle UTC times
 type Time time.Time
 
+// V returns the underlying object
+func (t Time) V() time.Time {
+	return time.Time(t)
+}
+
 // NewTime accepts a string in TimeFormat and returns a Time. TimeZero on error.
 func NewTime(s string) Time {
 	r, err := time.Parse(TimeFormat, s)
@@ -24,11 +29,6 @@ func NewTime(s string) Time {
 		return NewTime(TimeZero)
 	}
 	return Time(r)
-}
-
-// T returns the underlying time.Time object
-func (t Time) T() time.Time {
-	return time.Time(t)
 }
 
 // Scan implements the database/sql/driver Scanner interface
@@ -51,7 +51,7 @@ func (t *Time) Scan(value interface{}) error {
 
 // Value implements the database/sql/driver Valuer interface
 func (t Time) Value() (driver.Value, error) {
-	s := t.T().String()[:19]
+	s := t.V().String()[:19]
 	if s == TimeZero {
 		return "", nil
 	}
