@@ -31,7 +31,7 @@ func (t Time) T() time.Time {
 	return time.Time(t)
 }
 
-// Scan - Implement the database/sql/driver Scanner interface
+// Scan implements the database/sql/driver Scanner interface
 func (t *Time) Scan(value interface{}) error {
 	if value == nil {
 		// *t = Time([]string{})
@@ -49,7 +49,7 @@ func (t *Time) Scan(value interface{}) error {
 	return errors.New("failed to scan Time")
 }
 
-// Value - Implement the database/sql/driver Valuer interface
+// Value implements the database/sql/driver Valuer interface
 func (t Time) Value() (driver.Value, error) {
 	s := t.T().String()[:19]
 	if s == TimeZero {
@@ -58,14 +58,14 @@ func (t Time) Value() (driver.Value, error) {
 	return s, nil
 }
 
-// String - Implement the fmt Stringer interface
+// String implements the fmt Stringer interface
 func (t Time) String() string {
 	v, _ := t.Value()
 	s := v.(string)
 	return strings.Replace(s, " ", "T", 1) + "Z"
 }
 
-// MarshalJSON - Implement the json Marshal interface
+// MarshalJSON implements the json Marshal interface
 func (t Time) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.String())
 }

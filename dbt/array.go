@@ -9,7 +9,7 @@ import (
 // Array is a custom sql/driver type to handle list columns
 type Array []string
 
-// Scan - Implement the database/sql/driver Scanner interface
+// Scan implements the database/sql/driver Scanner interface
 func (a *Array) Scan(value interface{}) error {
 	if value == nil {
 		*a = Array([]string{})
@@ -29,12 +29,13 @@ func (a *Array) Scan(value interface{}) error {
 	return errors.New("failed to scan Array")
 }
 
-// Value - Implement the database/sql/driver Valuer interface
+// Value implements the database/sql/driver Valuer interface
 func (a Array) Value() (driver.Value, error) {
 	return strings.Join(a, ","), nil
 }
 
 func (a *Array) String() string {
+// String implements the fmt Stringer interface
 	v, _ := a.Value()
 	return v.(string)
 }
