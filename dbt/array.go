@@ -39,8 +39,8 @@ func (a Array) Value() (driver.Value, error) {
 	return strings.Join(a, ","), nil
 }
 
-func (a *Array) String() string {
 // String implements the fmt Stringer interface
+func (a Array) String() string {
 	v, _ := a.Value()
 	return v.(string)
 }
