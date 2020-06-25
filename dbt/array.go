@@ -9,6 +9,11 @@ import (
 // Array is a custom sql/driver type to handle list columns
 type Array []string
 
+// V returns the underlying object
+func (t Array) V() []string {
+	return []string(t)
+}
+
 // Scan implements the database/sql/driver Scanner interface
 func (a *Array) Scan(value interface{}) error {
 	if value == nil {
