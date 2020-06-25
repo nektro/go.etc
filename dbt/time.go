@@ -21,7 +21,7 @@ type Time time.Time
 func NewTime(s string) Time {
 	r, err := time.Parse(TimeFormat, s)
 	if err != nil {
-		NewTime(TimeZero)
+		return NewTime(TimeZero)
 	}
 	return Time(r)
 }
