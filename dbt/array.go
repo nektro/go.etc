@@ -10,18 +10,18 @@ import (
 type Array []string
 
 // Scan implements the database/sql/driver Scanner interface
-func (a *Array) Scan(value interface{}) error {
+func (t *Array) Scan(value interface{}) error {
 	if value == nil {
-		*a = Array([]string{})
+		*t = Array([]string{})
 		return nil
 	}
 	if bv, err := driver.String.ConvertValue(value); err == nil {
 		if v, ok := bv.(string); ok {
 			if len(v) == 0 {
-				*a = Array([]string{})
+				*t = Array([]string{})
 			}
 			if len(v) > 0 {
-				*a = Array(strings.Split(v, ","))
+				*t = Array(strings.Split(v, ","))
 			}
 			return nil
 		}
@@ -30,17 +30,17 @@ func (a *Array) Scan(value interface{}) error {
 }
 
 // V returns the underlying object
-func (a Array) V() []string {
-	return []string(a)
+func (t Array) V() []string {
+	return []string(t)
 }
 
 // Value implements the database/sql/driver Valuer interface
-func (a Array) Value() (driver.Value, error) {
-	return strings.Join(a, ","), nil
+func (t Array) Value() (driver.Value, error) {
+	return strings.Join(t, ","), nil
 }
 
 // String implements the fmt Stringer interface
-func (a Array) String() string {
-	v, _ := a.Value()
+func (t Array) String() string {
+	v, _ := t.Value()
 	return v.(string)
 }
