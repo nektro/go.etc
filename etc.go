@@ -11,6 +11,7 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -36,6 +37,7 @@ var (
 	ConfigPath string
 	JWTSecret  string
 	Port       int
+	Epoch, _   = time.Parse("Jan 2 2006", "Jan 1 2020")
 )
 
 var (
@@ -212,4 +214,19 @@ func FixBareVersion() {
 		}
 	}
 	Version += "-" + runtime.Version()
+}
+
+func JWTSet(w http.ResponseWriter, sub string) {
+	n, _ := os.Hostname()
+	http.SetCookie(w, &http.Cookie{
+		Name:   "jwt",
+		Value:  jwt.Get("astheno."+AppID+"."+Version+"."+n, sub, JWTSecret, Epoch, time.Hour*24*30),
+		MaxAge: 0,
+	})
+}
+
+func JWTGetClaims(c *htp.Controller, r *http.Request) jwt.MapClaims {
+	clms, err := jwt.VerifyRequest(r, JWTSecret)
+	c.Assert(err == nil, "403: "+err.Error())
+	return clms
 }
