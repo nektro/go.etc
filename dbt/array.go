@@ -21,7 +21,7 @@ func (t *Array) Scan(value interface{}) error {
 				*t = Array([]string{})
 			}
 			if len(v) > 0 {
-				*t = Array(strings.Split(v, ","))
+				*t = Array(strings.Split(v, "\n"))
 			}
 			return nil
 		}
@@ -36,7 +36,7 @@ func (t Array) V() []string {
 
 // Value implements the database/sql/driver Valuer interface
 func (t Array) Value() (driver.Value, error) {
-	return strings.Join(t, ","), nil
+	return strings.Join(t, "\n"), nil
 }
 
 // String implements the fmt Stringer interface
