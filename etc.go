@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -38,6 +39,7 @@ var (
 	JWTSecret  string
 	Port       int
 	Epoch, _   = time.Parse("Jan 2 2006", "Jan 1 2020")
+	HtpErrCb   = func(r *http.Request, w http.ResponseWriter, good bool, status int, message interface{}) {}
 )
 
 var (
@@ -139,6 +141,13 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 		htp.Register("/login", "GET", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients))
 		htp.Register("/callback", "GET", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
 		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
+	}
+
+	htp.ErrorHandleFunc = func(w http.ResponseWriter, r *http.Request, data string) {
+		code, _ := strconv.Atoi(data[:3])
+		good := !(code >= 400)
+		w.WriteHeader(int(code))
+		HtpErrCb(r, w, good, int(code), data[5:])
 	}
 }
 
