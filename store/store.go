@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/nektro/go-util/util"
+	"github.com/nektro/go.etc/store/local"
 
 	. "github.com/nektro/go-util/alias"
 )
@@ -19,6 +20,8 @@ func Init(typ string, urlS string) {
 
 	doInit := func() Inner {
 		switch typ {
+		case "local":
+			return local.Get(urlS)
 		}
 		util.DieOnError(E(F("'%s' is not a valid store handler type", typ)))
 		return nil
