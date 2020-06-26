@@ -29,30 +29,30 @@ func Get(iss string, sub string, secret string, nbf time.Time, exp time.Duration
 type MapClaims jwt.MapClaims
 
 // Verify takes in a JWT string an a corresponding HS256 secret and verifies the token and its claims are valid.
-func Verify(token string, secret string) (MapClaims, bool) {
+func Verify(token string, secret string) (MapClaims, error) {
 	tokenO, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("Unexpected signing method: " + fmt.Sprintf("%v", t.Header["alg"]))
+			return nil, errors.New("unexpected signing method: " + fmt.Sprintf("%v", t.Header["alg"]))
 		}
 		return []byte(secret), nil
 	})
 	if err != nil {
-		return nil, false
+		return nil, errors.New("astheno/jwt: token: " + err.Error())
 	}
 	if !tokenO.Valid {
-		return nil, false
+		return nil, errors.New("astheno/jwt: token: not valid")
 	}
 	claims, ok := tokenO.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, false
+		return nil, errors.New("astheno/jwt: claims: not a MapClaims")
 	}
-	if claims.Valid() != nil {
-		return nil, false
+	if err = claims.Valid(); err != nil {
+		return nil, errors.New("astheno/jwt: claims: " + err.Error())
 	}
-	return MapClaims(claims), true
+	return MapClaims(claims), nil
 }
 
 // VerifyRequest is a shortcut for `Verify(FromRequest(r), secret)`
-func VerifyRequest(r *http.Request, secret string) (MapClaims, bool) {
+func VerifyRequest(r *http.Request, secret string) (MapClaims, error) {
 	return Verify(FromRequest(r), secret)
 }

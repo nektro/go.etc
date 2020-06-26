@@ -145,8 +145,8 @@ func DataRoot() string {
 }
 
 func helperIsLoggedIn(r *http.Request) bool {
-	_, ok := jwt.VerifyRequest(r, JWTSecret)
-	return ok
+	_, err := jwt.VerifyRequest(r, JWTSecret)
+	return err == nil
 }
 
 func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, context map[string]interface{}) {
