@@ -5,6 +5,7 @@ import (
 
 	"github.com/nektro/go-util/util"
 	"github.com/nektro/go.etc/store/local"
+	"github.com/nektro/go.etc/store/redis"
 
 	. "github.com/nektro/go-util/alias"
 )
@@ -22,6 +23,8 @@ func Init(typ string, urlS string) {
 		switch typ {
 		case "local":
 			return local.Get(urlS)
+		case "redis":
+			return redis.Get(urlS)
 		}
 		util.DieOnError(E(F("'%s' is not a valid store handler type", typ)))
 		return nil
