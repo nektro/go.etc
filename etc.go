@@ -30,6 +30,7 @@ import (
 // globals
 var (
 	AppID      string
+	Version    = "vMASTER"
 	MFS        = new(types.MultiplexFileSystem)
 	Database   dbstorage.Database
 	ConfigPath string
@@ -197,19 +198,18 @@ func StartServer() {
 
 // FixBareVersion will convert a 'vMASTER' version string to a string
 // similar to 'vMASTER-2020.02.12-6cae79d'. Always append go version.
-func FixBareVersion(vs string) string {
-	if vs == "vMASTER" {
+func FixBareVersion() {
+	if Version == "vMASTER" {
 		// add date
 		pathS, _ := filepath.Abs(os.Args[0])
 		s, _ := os.Stat(pathS)
-		vs += "-" + strings.ReplaceAll(s.ModTime().UTC().String()[:10], "-", ".")
+		Version += "-" + strings.ReplaceAll(s.ModTime().UTC().String()[:10], "-", ".")
 
 		// add git hash
 		b, _ := exec.Command("git", "rev-parse", "--short", "HEAD").Output()
 		if len(b) == 8 {
-			vs += "-" + string(b)[:7]
+			Version += "-" + string(b)[:7]
 		}
 	}
-	vs += "-" + runtime.Version()
-	return vs
+	Version += "-" + runtime.Version()
 }
