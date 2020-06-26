@@ -65,6 +65,7 @@ func PreInit() {
 	vflag.IntVar(&Port, "port", 8000, "The port to bind the web server to.")
 
 	vflag.Parse()
+	SetSessionName("session_" + AppID)
 }
 
 // Init sets up app-agnostic features
