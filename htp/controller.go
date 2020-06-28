@@ -1,8 +1,12 @@
 package htp
 
+import (
+	"net/http"
+)
+
 // Controller is the htp package's extension
 type Controller struct {
-	//
+	r *http.Request
 }
 
 // panic tests condition and panics if not met

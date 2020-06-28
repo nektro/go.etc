@@ -17,14 +17,14 @@ import (
 var (
 	router          *mux.Router
 	ErrorHandleFunc func(http.ResponseWriter, *http.Request, string)
-	controller      *Controller
+	controllers     map[*http.Request]*Controller
 )
 
 // Init sets up globals to their default state
 func Init() {
 	router = mux.NewRouter()
 	ErrorHandleFunc = func(http.ResponseWriter, *http.Request, string) {}
-	controller = &Controller{}
+	controllers = map[*http.Request]*Controller{}
 
 	router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -71,12 +71,18 @@ func Register(path, method string, h func(w http.ResponseWriter, r *http.Request
 			}
 		}()
 		h(w, r)
+		delete(controllers, r)
 	})
 }
 
 // GetController allows you to gain access to this method's htp.Controller
 func GetController(r *http.Request) *Controller {
-	return controller
+	c, ok := controllers[r]
+	if !ok {
+		c = &Controller{r}
+		controllers[r] = c
+	}
+	return c
 }
 
 // RegisterFileSystem is a custom version of Register where it adds a http.FileSystem to the router
