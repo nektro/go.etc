@@ -39,7 +39,7 @@ var (
 	JWTSecret  string
 	Port       int
 	Epoch, _   = time.Parse("Jan 2 2006", "Jan 1 2020")
-	HtpErrCb   = func(r *http.Request, w http.ResponseWriter, good bool, status int, message interface{}) {}
+	HtpErrCb   = func(r *http.Request, w http.ResponseWriter, good bool, status int, message string) {}
 )
 
 var (
