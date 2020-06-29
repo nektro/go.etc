@@ -83,7 +83,7 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	vflag.Parse()
 
 	//
-	db, err := dbstorage.ConnectSqlite(dRoot + "/access.db")
+	db, err := connectDB()
 	util.DieOnError(err)
 	Database = db
 
@@ -150,6 +150,10 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 		w.WriteHeader(int(code))
 		HtpErrCb(r, w, good, int(code), data[5:])
 	}
+}
+
+func connectDB() (dbstorage.Database, error) {
+	return dbstorage.ConnectSqlite(DataRoot() + "/access.db")
 }
 
 func DataRoot() string {
