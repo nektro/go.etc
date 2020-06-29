@@ -153,6 +153,12 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 }
 
 func connectDB() (dbstorage.Database, error) {
+	if len(os.Getenv("POSTGRES_URL")) > 0 {
+		return dbstorage.ConnectPostgres()
+	}
+	if len(os.Getenv("MYSQL_URL")) > 0 {
+		return dbstorage.ConnectMysql()
+	}
 	return dbstorage.ConnectSqlite(DataRoot() + "/access.db")
 }
 
