@@ -7,6 +7,8 @@ import (
 
 	"github.com/nektro/go.etc/htp"
 	"github.com/nektro/go.etc/jwt"
+
+	. "github.com/nektro/go-util/alias"
 )
 
 // JWTSet sets a 'jwt' cookie on the provided ResponseWriter
@@ -22,7 +24,7 @@ func JWTSet(w http.ResponseWriter, sub string) {
 // JWTGetClaims reads the 'jwt' cookie and returns claims within it, if they are valid
 func JWTGetClaims(c *htp.Controller, r *http.Request) jwt.MapClaims {
 	clms, err := jwt.VerifyRequest(r, JWTSecret)
-	c.Assert(err == nil, "403: "+err.Error())
+	c.Assert(err == nil, "403: "+F("%v", err))
 	return clms
 }
 
