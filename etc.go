@@ -12,7 +12,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/aymerick/raymond"
 	"github.com/mitchellh/go-homedir"
@@ -22,6 +21,7 @@ import (
 	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
 	"github.com/nektro/go.etc/htp"
+	"github.com/nektro/go.etc/internal"
 	"github.com/nektro/go.etc/jwt"
 	oauth2 "github.com/nektro/go.oauth2"
 	"github.com/rakyll/statik/fs"
@@ -38,7 +38,7 @@ var (
 	ConfigPath string
 	JWTSecret  string
 	Port       int
-	Epoch, _   = time.Parse("Jan 2 2006", "Jan 1 2020")
+	Epoch      = internal.Epoch
 	HtpErrCb   = func(r *http.Request, w http.ResponseWriter, good bool, status int, message string) {}
 )
 
