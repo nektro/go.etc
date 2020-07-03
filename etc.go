@@ -85,7 +85,7 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	//
 	db, err := connectDB()
 	util.DieOnError(err)
-	util.Log("astheno:", "db:", db.DriverName())
+	util.Log("etc:", "db:", db.DriverName())
 	Database = db
 
 	//
