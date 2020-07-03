@@ -33,7 +33,7 @@ func Init(typ string, urlS string) {
 }
 
 func ensureStore() {
-	util.Log("store:", This.Type())
+	util.Log("astheno:", "store:", This.Type())
 	util.DieOnError(This.Ping())
 }
 
