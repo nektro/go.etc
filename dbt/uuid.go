@@ -20,8 +20,8 @@ func NewUUID() UUID {
 	return UUID(ulid.MustNew(ulid.Timestamp(t), entropy).String())
 }
 
-// Is returns if id is a valid UUID, false if empty or invalid
-func (UUID) Is(id UUID) bool {
+// IsUUID returns if id is a valid UUID, false if empty or invalid
+func IsUUID(id UUID) bool {
 	s := string(id)
 	_, err := ulid.Parse(s)
 	return err == nil
