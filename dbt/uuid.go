@@ -14,10 +14,10 @@ import (
 type UUID string
 
 // NewUUID creates a new UUID
-func NewUUID() string {
+func NewUUID() UUID {
 	t := time.Unix(0, time.Now().UnixNano()-internal.Epoch.UnixNano())
 	var entropy = ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
-	return ulid.MustNew(ulid.Timestamp(t), entropy).String()
+	return UUID(ulid.MustNew(ulid.Timestamp(t), entropy).String())
 }
 
 // Scan implements the database/sql/driver Scanner interface
