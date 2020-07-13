@@ -148,7 +148,6 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	htp.ErrorHandleFunc = func(w http.ResponseWriter, r *http.Request, data string) {
 		code, _ := strconv.Atoi(data[:3])
 		good := !(code >= 400)
-		w.WriteHeader(int(code))
 		HtpErrCb(r, w, good, int(code), data[5:])
 	}
 }
