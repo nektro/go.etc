@@ -1,7 +1,6 @@
 package etc
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -189,18 +188,7 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 	reader, _ := MFS.Open(path)
 	bytes, _ := ioutil.ReadAll(reader)
 	template := string(bytes)
-	contentType := "text/html"
 	result, _ := raymond.Render(template, context)
-
-	switch r.Header.Get("accept") {
-	case "application/json":
-		contentType = "application/json"
-		resultB, _ := json.Marshal(context)
-		result = string(resultB)
-	default:
-	}
-
-	w.Header().Add("Content-Type", contentType)
 	fmt.Fprintln(w, result)
 }
 
