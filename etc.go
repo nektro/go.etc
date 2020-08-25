@@ -52,6 +52,9 @@ var (
 // PreInit registers and parses application flags
 func PreInit() {
 	for k := range oauth2.ProviderIDMap {
+		if k[0] == '_' {
+			continue
+		}
 		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
 		defProviders = append(defProviders, n)
 		i := "auth-" + n + "-id"
