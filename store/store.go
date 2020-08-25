@@ -44,6 +44,7 @@ type Inner interface {
 	Has(key string) bool
 	Set(key string, val string)
 	Get(key string) string
+	Rem(key string)
 	Range(f func(key string, val string) bool)
 	HasList(key string) bool
 	ListHas(key, value string) bool

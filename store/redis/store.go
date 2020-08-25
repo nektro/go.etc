@@ -56,6 +56,11 @@ func (p *Store) Get(key string) string {
 	return s
 }
 
+// Rem removes a key from the store
+func (p *Store) Rem(key string) {
+	p.c.Del(key)
+}
+
 // Range loops over all values in this Store
 func (p *Store) Range(f func(key string, val string) bool) {
 	arr, _ := p.c.Keys("*").Result()
