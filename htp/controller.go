@@ -1,6 +1,7 @@
 package htp
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -44,4 +45,8 @@ func (v *Controller) GetFormInt(name string) (string, int64) {
 	n, err := strconv.ParseInt(s, 10, 64)
 	v.Assert(err == nil, "400: form value must be a number: "+name)
 	return s, n
+}
+
+func (v *Controller) AssertNilErr(err error) {
+	v.Assert(err == nil, "400: "+fmt.Sprintf("%v", err))
 }
