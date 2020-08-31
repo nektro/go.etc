@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/nektro/go-util/util"
+	"github.com/nektro/go-util/vflag"
 )
 
 // globals
@@ -16,6 +17,8 @@ var (
 	router          *mux.Router
 	ErrorHandleFunc func(http.ResponseWriter, *http.Request, string)
 	controllers     map[*http.Request]*Controller
+	base            = vflag.String("base", "/", "The path to mount all listeners on")
+	baseReal        string
 )
 
 // Init sets up globals to their default state
@@ -23,6 +26,8 @@ func Init() {
 	router = mux.NewRouter()
 	ErrorHandleFunc = func(http.ResponseWriter, *http.Request, string) {}
 	controllers = map[*http.Request]*Controller{}
+	util.DieOnError(util.Assert(strings.HasSuffix(*base, "/"), "--base must end in '/'"))
+	baseReal = strings.TrimSuffix(*base, "/")
 
 	router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -46,9 +51,9 @@ func Register(path, method string, h func(w http.ResponseWriter, r *http.Request
 	rt := router.NewRoute()
 	rt.Methods(methods...)
 	if strings.HasSuffix(path, "/*") {
-		rt.PathPrefix(strings.TrimSuffix(path, "*"))
+		rt.PathPrefix(baseReal + strings.TrimSuffix(path, "*"))
 	} else {
-		rt.Path(path)
+		rt.Path(baseReal + path)
 	}
 	rt.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
