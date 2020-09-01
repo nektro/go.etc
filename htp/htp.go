@@ -99,8 +99,7 @@ func StartServer(port int) {
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), "Binding to port "+p+" failed."), "It may be taken or you may not have permission to. Aborting!")
 	util.Log("Starting server on port " + p)
 	if util.AreWeInContainer() {
-		util.LogWarn("Looks like we might be running inside a container,")
-		util.LogWarn("", "", "", "so "+p+" might not be the actual port to access this server.")
+		util.LogWarn("Looks like we might be running inside a container, so " + p + " might not be the actual port to access this server.")
 	}
 	util.Log("Initialization complete.")
 	srv := &http.Server{
