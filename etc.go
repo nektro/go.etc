@@ -142,7 +142,7 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 			}
 		}
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
-		htp.Register("/login", "GET", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients, "/callback"))
+		htp.Register("/login", "GET", oauth2.HandleMultiOAuthLogin(helperIsLoggedIn, doneURL, clients, htp.Base()+"callback"))
 		htp.Register("/callback", "GET", oauth2.HandleMultiOAuthCallback(doneURL, clients, saveOA2Info))
 		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
 	}
