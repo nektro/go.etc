@@ -90,7 +90,8 @@ func GetController(r *http.Request) *Controller {
 
 // RegisterFileSystem is a custom version of Register where it adds a http.FileSystem to the router
 func RegisterFileSystem(fs http.FileSystem) {
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(fs)))
+	p := baseReal + "/"
+	router.PathPrefix(p).Handler(http.StripPrefix(p, http.FileServer(fs)))
 }
 
 // StartServer initializes this server and listens on port
