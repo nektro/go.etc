@@ -18,7 +18,7 @@ var (
 	ErrorHandleFunc func(http.ResponseWriter, *http.Request, string)
 	controllers     map[*http.Request]*Controller
 	base            = vflag.String("base", "/", "The path to mount all listeners on")
-	Base            string
+	baseReal        string
 )
 
 // Init sets up globals to their default state
@@ -27,7 +27,7 @@ func Init() {
 	ErrorHandleFunc = func(http.ResponseWriter, *http.Request, string) {}
 	controllers = map[*http.Request]*Controller{}
 	util.DieOnError(util.Assert(strings.HasSuffix(*base, "/"), "--base must end in '/'"))
-	Base = strings.TrimSuffix(*base, "/")
+	baseReal = strings.TrimSuffix(*base, "/")
 
 	router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -51,9 +51,9 @@ func Register(path, method string, h func(w http.ResponseWriter, r *http.Request
 	rt := router.NewRoute()
 	rt.Methods(methods...)
 	if strings.HasSuffix(path, "/*") {
-		rt.PathPrefix(Base + strings.TrimSuffix(path, "*"))
+		rt.PathPrefix(baseReal + strings.TrimSuffix(path, "*"))
 	} else {
-		rt.Path(Base + path)
+		rt.Path(baseReal + path)
 	}
 	rt.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
@@ -90,8 +90,13 @@ func GetController(r *http.Request) *Controller {
 
 // RegisterFileSystem is a custom version of Register where it adds a http.FileSystem to the router
 func RegisterFileSystem(fs http.FileSystem) {
-	p := Base + "/"
+	p := baseReal + "/"
 	router.PathPrefix(p).Handler(http.StripPrefix(p, http.FileServer(fs)))
+}
+
+// Base returns the root that all methods are mounted on
+func Base() string {
+	return baseReal + "/"
 }
 
 // StartServer initializes this server and listens on port
