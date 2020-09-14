@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/nektro/go-util/util"
@@ -109,10 +108,8 @@ func StartServer(port int) {
 	}
 	util.Log("Initialization complete.")
 	srv := &http.Server{
-		Handler:      router,
-		Addr:         ":" + p,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Handler: router,
+		Addr:    ":" + p,
 	}
 	srv.ListenAndServe()
 }
