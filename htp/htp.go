@@ -18,6 +18,7 @@ var (
 	controllers     map[*http.Request]*Controller
 	base            = vflag.String("base", "/", "The path to mount all listeners on")
 	baseReal        string
+	srv             *http.Server
 )
 
 // Init sets up globals to their default state
@@ -107,7 +108,7 @@ func StartServer(port int) {
 		util.LogWarn("Looks like we might be running inside a container, so " + p + " might not be the actual port to access this server.")
 	}
 	util.Log("Initialization complete.")
-	srv := &http.Server{
+	srv = &http.Server{
 		Handler: router,
 		Addr:    ":" + p,
 	}
