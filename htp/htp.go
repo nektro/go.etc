@@ -1,6 +1,7 @@
 package htp
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -113,4 +114,10 @@ func StartServer(port int) {
 		Addr:    ":" + p,
 	}
 	srv.ListenAndServe()
+}
+
+// StopServer performs a graceful shutdown of the HTTP server
+func StopServer() {
+	srv.Close()
+	srv.Shutdown(context.Background())
 }
