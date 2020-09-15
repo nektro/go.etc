@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/nektro/go-util/util"
@@ -20,6 +21,7 @@ var (
 	base            = vflag.String("base", "/", "The path to mount all listeners on")
 	baseReal        string
 	srv             *http.Server
+	mtx             = new(sync.Mutex)
 )
 
 // Init sets up globals to their default state
@@ -81,6 +83,9 @@ func Register(path, method string, h func(w http.ResponseWriter, r *http.Request
 
 // GetController allows you to gain access to this method's htp.Controller
 func GetController(r *http.Request) *Controller {
+	mtx.Lock()
+	defer mtx.Unlock()
+
 	c, ok := controllers[r]
 	if !ok {
 		c = &Controller{r}
