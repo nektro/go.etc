@@ -77,7 +77,9 @@ func Register(path, method string, h func(w http.ResponseWriter, r *http.Request
 			}
 		}()
 		h(w, r)
+		mtx.Lock()
 		delete(controllers, r)
+		mtx.Unlock()
 	})
 }
 
