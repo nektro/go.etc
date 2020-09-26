@@ -50,17 +50,6 @@ var (
 
 // PreInit registers and parses application flags
 func PreInit() {
-	for k := range oauth2.ProviderIDMap {
-		if k[0] == '_' {
-			continue
-		}
-		n := strings.ReplaceAll(strings.ReplaceAll(k, "_", "-"), ".", "-")
-		defProviders = append(defProviders, n)
-		i := "auth-" + n + "-id"
-		appconfFlags[i] = vflag.String(i, "", "Client ID for "+k+" OAuth2 authentication.")
-		s := "auth-" + n + "-secret"
-		appconfFlags[s] = vflag.String(s, "", "Client Secret for "+k+" OAuth2 authentication.")
-	}
 	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
 	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
 	vflag.StringVar(&JWTSecret, "jwt-secret", util.RandomString(64), "Privte secret to sign and verify JWT auth tokens with.")
