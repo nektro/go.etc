@@ -43,7 +43,6 @@ var (
 
 var (
 	defProviders = []string{}
-	appconfFlags = map[string]*string{}
 	appFlagTheme []string
 	homedirV, _  = homedir.Dir()
 )
@@ -121,15 +120,6 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 	f, ok = t.FieldByName("Clients")
 	if ok {
 		clients := []oauth2.AppConf{}
-		for _, n := range defProviders {
-			i := "auth-" + n + "-id"
-			s := "auth-" + n + "-secret"
-			iv := *appconfFlags[i]
-			sv := *appconfFlags[s]
-			if len(iv) > 0 && len(sv) > 0 {
-				clients = append(clients, oauth2.AppConf{For: n, ID: iv, Secret: sv})
-			}
-		}
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
 		callbackPath := htp.Base() + "callback"
 		loginH, callbackH := oauth2.GetHandlers(helperIsLoggedIn, doneURL, callbackPath, clients, saveOA2Info)
