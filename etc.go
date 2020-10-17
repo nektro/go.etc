@@ -53,6 +53,7 @@ func PreInit() {
 	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
 	vflag.StringVar(&JWTSecret, "jwt-secret", util.RandomString(64), "Privte secret to sign and verify JWT auth tokens with.")
 	vflag.IntVar(&Port, "port", 8000, "The port to bind the web server to.")
+	htp.PreInit()
 
 	vflag.Parse()
 	SetSessionName("session_" + AppID)

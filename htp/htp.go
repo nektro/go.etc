@@ -22,7 +22,13 @@ var (
 	baseReal        string
 	srv             *http.Server
 	mtx             = new(sync.Mutex)
+	allowedips      = []string{}
 )
+
+// PreInit sets up flags
+func PreInit() {
+	vflag.StringArrayVar(&allowedips, "allow-ip", []string{}, "Only allow requests from specific IP pattern. Use 'x' for replacements.")
+}
 
 // Init sets up globals to their default state
 func Init() {
@@ -37,6 +43,24 @@ func Init() {
 			w.Header().Add("X-Frame-Options", "sameorigin")
 			w.Header().Add("X-Content-Type-Options", "nosniff")
 			w.Header().Add("Referrer-Policy", "origin")
+			next.ServeHTTP(w, r)
+		})
+	})
+	router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			a := strings.Split(strings.Split(r.RemoteAddr, ":")[0], ".")
+			for _, item := range allowedips {
+				for j, jtem := range strings.Split(item, ".") {
+					if jtem == "x" {
+						continue
+					}
+					if jtem != a[j] {
+						fmt.Fprintln(w, "403 forbidden")
+						fmt.Fprintln(w, "ip not allowed")
+						return
+					}
+				}
+			}
 			next.ServeHTTP(w, r)
 		})
 	})
