@@ -123,7 +123,8 @@ func Init(config interface{}, doneURL string, saveOA2Info oauth2.SaveInfoFunc) {
 		clients := []oauth2.AppConf{}
 		clients = append(clients, v.FieldByName(f.Name).Interface().([]oauth2.AppConf)...)
 		callbackPath := htp.Base() + "callback"
-		loginH, callbackH := oauth2.GetHandlers(helperIsLoggedIn, doneURL, callbackPath, clients, saveOA2Info)
+		loginH, callbackH := oauth2.GetHandlers(helperIsLoggedIn, doneURL, callbackPath, &clients, saveOA2Info)
+		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
 		htp.Register("/login", "GET", loginH)
 		htp.Register("/callback", "GET", callbackH)
 		v.FieldByName(f.Name).Set(reflect.ValueOf(clients))
