@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 )
 
 // Get takes in init values and returns a signed HS256 JWT as a string.
