@@ -216,7 +216,7 @@ func Base() string {
 }
 
 // StartServer initializes this server and listens on port
-func StartServer(port int) {
+func StartServer(bind string, port int) {
 	p := strconv.Itoa(port)
 	util.DieOnError(util.Assert(util.IsPortAvailable(port), "Binding to port "+p+" failed."), "It may be taken or you may not have permission to. Aborting!")
 	util.Log("Starting server on port " + p)
@@ -226,7 +226,7 @@ func StartServer(port int) {
 	util.Log("Initialization complete.")
 	srv = &http.Server{
 		Handler: router,
-		Addr:    ":" + p,
+		Addr:    bind + ":" + p,
 	}
 	srv.ListenAndServe()
 }

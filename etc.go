@@ -36,6 +36,7 @@ var (
 	Database   dbstorage.Database
 	ConfigPath string
 	JWTSecret  string
+	Bind       string
 	Port       int
 	Epoch      = internal.Epoch
 	HtpErrCb   = func(r *http.Request, w http.ResponseWriter, good bool, status int, message string) {}
@@ -51,7 +52,8 @@ var (
 func PreInit() {
 	vflag.StringArrayVar(&appFlagTheme, "theme", []string{}, "A CLI way to add config themes.")
 	vflag.StringVar(&ConfigPath, "config", homedirV+"/.config/"+AppID+"/config.json", "")
-	vflag.StringVar(&JWTSecret, "jwt-secret", util.RandomString(64), "Privte secret to sign and verify JWT auth tokens with.")
+	vflag.StringVar(&JWTSecret, "jwt-secret", util.RandomString(64), "Private secret to sign and verify JWT auth tokens with.")
+	vflag.StringVar(&Bind, "bind", "127.0.0.1", "IP to bind")
 	vflag.IntVar(&Port, "port", 8000, "The port to bind the web server to.")
 	htp.PreInit()
 
@@ -177,7 +179,7 @@ func WriteHandlebarsFile(r *http.Request, w http.ResponseWriter, path string, co
 
 func StartServer() {
 	htp.RegisterFileSystem(MFS)
-	htp.StartServer(Port)
+	htp.StartServer(Bind, Port)
 }
 
 // FixBareVersion will convert a 'vMASTER' version string to a string
